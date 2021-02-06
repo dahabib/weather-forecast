@@ -20,22 +20,62 @@
 
 <body>
     <div class="container">
-        <form class="col-md-6 m-auto py-5">
+        <form id="form" class="col-md-6 m-auto py-5">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Enter a location for Weather ...">
+                <input id="input-city" type="text" class="form-control" placeholder="Enter a location for Weather ...">
                 <div class="input-group-append">
-                    <button type="button" class="btn btn-danger">Search</button>
+                    <button id="submit" type="submit" class="btn btn-danger">Search</button>
                 </div>
             </div>
         </form>
         <div class="weather-status text-white text-center">
-            <img src="https://openweathermap.org/img/wn/02d@2x.png" alt="">
-            <h1>Dhaka</h1>
-            <h3><span>38.06</span>&deg;C</h3>
-            <h1 class="lead">Clouds</h1>
+            <img src="https://openweathermap.org/img/wn/02d@2x.png" alt="" id="icon">
+            <h1 id="city-name">Dhaka</h1>
+            <h3><span id="temp">38.06</span>&deg;C</h3>
+            <h1 id="lead" class="lead">Clouds</h1>
         </div>
     </div>
+    <script>
+        // open weather API key
+        const apiKey = 'bf6469563a82df2403ea5a0473338f88';
+        const baseUrl = 'http://api.openweathermap.org/data/2.5/weather';
 
+
+
+        // Submit Button
+        const submitButton = document.getElementById('submit');
+
+        submitButton.addEventListener('click', function () {
+            // input field
+            const cityInput = document.getElementById('input-city').value;
+            callAPI(cityInput);
+        });
+
+        const form = document.getElementById('form');
+        form.addEventListener('submit', function () {
+            // input field
+            const cityInput = document.getElementById('input-city').value;
+            callAPI(cityInput);
+            console.log('submitted');
+        });
+
+        function callAPI(cityInput) {
+            const url = `${baseUrl}?q=${cityInput}&units=metric&appid=${apiKey}`;
+            fetch(url)
+                .then(res => res.json())
+                .then(data => displayWeather(data))
+                .catch(error => console.log(error))
+        }
+
+        function displayWeather(data) {
+            console.log(data);
+            document.getElementById('city-name').innerText = data.name || "Unknown Location";
+            document.getElementById('temp').innerText = data.main.temp;
+            document.getElementById('lead').innerText = data.weather[0].main;
+            document.getElementById('icon').setAttribute('src', `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`);
+            document.getElementById('input-city').value = "";
+        }
+    </script>
 </body>
 
 </html>
